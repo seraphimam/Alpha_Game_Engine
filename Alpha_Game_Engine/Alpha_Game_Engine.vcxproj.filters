@@ -18,5 +18,45 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="display_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pipeline_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="display_window.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_test.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="device.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\shader_test.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\shader_test.frag.spv">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\shader_test.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\shader_test.vert.spv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
