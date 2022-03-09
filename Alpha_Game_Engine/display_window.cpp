@@ -1,7 +1,7 @@
 #include "display_window.h"
 #include <stdexcept>
 
-//namespace display {
+namespace dev {
 
 	Display_Window::Display_Window(int w, int h, std::string name) : width{ w }, height{ h }, windowName{ name } {
 		initWindow();
@@ -28,4 +28,4 @@
 	}
 
 	
-//}
+}

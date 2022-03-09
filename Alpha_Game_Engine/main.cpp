@@ -6,7 +6,7 @@
 int main() {
 	//display::App app{};
 
-	App app{};
+	dev::App app{};
 
 	try {
 		app.run();

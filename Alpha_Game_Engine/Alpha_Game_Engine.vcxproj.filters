@@ -30,6 +30,9 @@
     <ClCompile Include="device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="swap_chain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="display_window.h">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="device.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="swap_chain.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

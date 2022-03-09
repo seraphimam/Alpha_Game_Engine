@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace lve {
+namespace dev {
 
     struct SwapChainSupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;
@@ -22,7 +22,7 @@ namespace lve {
         bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
     };
 
-    class MyEngineDevice {
+    class MyDevice {
     public:
 #ifdef NDEBUG
         const bool enableValidationLayers = false;
@@ -30,14 +30,14 @@ namespace lve {
         const bool enableValidationLayers = true;
 #endif
 
-        MyEngineDevice(Display_Window& window);
-        ~MyEngineDevice();
+        MyDevice(Display_Window& window);
+        ~MyDevice();
 
         // Not copyable or movable
-        MyEngineDevice(const MyEngineDevice&) = delete;
-        void operator=(const MyEngineDevice&) = delete;
-        MyEngineDevice(MyEngineDevice&&) = delete;
-        MyEngineDevice& operator=(MyEngineDevice&&) = delete;
+        MyDevice(const MyDevice&) = delete;
+        void operator=(const MyDevice&) = delete;
+        MyDevice(MyDevice&&) = delete;
+        MyDevice& operator=(MyDevice&&) = delete;
 
         VkCommandPool getCommandPool() { return commandPool; }
         VkDevice device() { return device_; }
