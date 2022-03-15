@@ -4,6 +4,7 @@
 #include "pipeline_test.h"
 #include "swap_chain.h"
 #include "display_window.h"
+#include "Alpha_Model.h"
 
 #include <memory>
 #include <vector>
@@ -23,6 +24,7 @@ namespace dev {
 			void run();
 
 		private:
+			void loadModels();
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
@@ -35,6 +37,7 @@ namespace dev {
 			std::unique_ptr<MyPipeline> pipeline;
 			VkPipelineLayout pipelineLayout;
 			std::vector<VkCommandBuffer> commandBuffers;
+			std::unique_ptr<Alpha_Model> model;
 			
 			/*MyPipeline MyPipeline{
 				device,

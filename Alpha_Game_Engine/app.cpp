@@ -1,5 +1,6 @@
 #include "app.h"
 
+#include <array>
 #include <stdexcept>
 
 namespace dev {
@@ -20,6 +21,16 @@ namespace dev {
 		}
 
 		vkDeviceWaitIdle(device.device());
+	}
+
+	void App::loadModels() {
+		std::vector<Alpha_Model::Vertex> vertices{
+			{{0.0f, -0.5f}},
+			{{0.5f, 0.5f}},
+			{{-0.5f, 0.5f}}
+		};
+
+		model = std::make_unique<Alpha_Model>(device, vertices);
 	}
 
 	void App::createPipelineLayout() {
@@ -75,11 +86,11 @@ namespace dev {
 			renderPassInfo.renderArea.offset = { 0, 0 };
 			renderPassInfo.renderArea.extent = MyEngineSwapChain.getSwapChainExtent();
 
-			/*std::array<VkClearValue, 2> clearValues{};
+			std::array<VkClearValue, 2> clearValues{};
 			clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f, 0.0f };
+			clearValues[1].depthStencil = { 1.0f, 0 };
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();*/
+			renderPassInfo.pClearValues = clearValues.data();
 
 			VkClearValue clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 			renderPassInfo.clearValueCount = 1;
@@ -88,14 +99,16 @@ namespace dev {
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		
 			pipeline->bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			//vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			model->bind(commandBuffers[i]);
+			model->draw(commandBuffers[i]);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to record command buffer!");
 			}
 		}
-	}
+	}//end createCommandBuffers()
 
 	void App::drawFrame() {
 		uint32_t imageIndex;

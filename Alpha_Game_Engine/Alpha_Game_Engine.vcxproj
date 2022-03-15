@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Alpha_Model.cpp" />
     <ClCompile Include="app.cpp" />
     <ClCompile Include="device.cpp" />
     <ClCompile Include="display_window.cpp" />
@@ -155,17 +156,12 @@
     <ClCompile Include="swap_chain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Alpha_Model.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="device.h" />
     <ClInclude Include="display_window.h" />
     <ClInclude Include="swap_chain.h" />
     <ClInclude Include="pipeline_test.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\shader_test.frag" />
-    <None Include="shaders\shader_test.frag.spv" />
-    <None Include="shaders\shader_test.vert" />
-    <None Include="shaders\shader_test.vert.spv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

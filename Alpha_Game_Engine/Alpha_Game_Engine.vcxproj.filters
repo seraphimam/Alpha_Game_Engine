@@ -33,6 +33,9 @@
     <ClCompile Include="swap_chain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Alpha_Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="display_window.h">
@@ -50,19 +53,8 @@
     <ClInclude Include="swap_chain.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\shader_test.frag">
+    <ClInclude Include="Alpha_Model.h">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="shaders\shader_test.frag.spv">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="shaders\shader_test.vert">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="shaders\shader_test.vert.spv">
-      <Filter>Source Files</Filter>
-    </None>
+    </ClInclude>
   </ItemGroup>
 </Project>
