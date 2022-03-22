@@ -35,7 +35,7 @@ namespace dev {
 
         // Not copyable or movable
         MyDevice(const MyDevice&) = delete;
-        void operator=(const MyDevice&) = delete;
+        MyDevice& operator=(const MyDevice&) = delete;
         MyDevice(MyDevice&&) = delete;
         MyDevice& operator=(MyDevice&&) = delete;
 

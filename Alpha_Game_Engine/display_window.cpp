@@ -22,9 +22,20 @@ namespace dev {
 	void Display_Window::initWindow() {
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+	
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+	}
+
+	void Display_Window::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+		auto display = reinterpret_cast<Display_Window *>(glfwGetWindowUserPointer(window));
+
+		display->framebufferResized = true;
+		display->width = width;
+		display->height = height;
 	}
 
 	

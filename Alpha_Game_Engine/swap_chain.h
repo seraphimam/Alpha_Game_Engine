@@ -9,6 +9,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace dev {
 
@@ -17,10 +18,11 @@ namespace dev {
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
         
         MyEngineSwapChain(MyDevice& deviceRef, VkExtent2D windowExtent);
+        MyEngineSwapChain(MyDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<MyEngineSwapChain> previous);
         ~MyEngineSwapChain();
 
         MyEngineSwapChain(const MyEngineSwapChain&) = delete;
-        void operator=(const MyEngineSwapChain&) = delete;
+        MyEngineSwapChain& operator=(const MyEngineSwapChain&) = delete;
 
         VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
         VkRenderPass getRenderPass() { return renderPass; }

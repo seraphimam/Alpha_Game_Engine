@@ -29,11 +29,13 @@ namespace dev {
 			void createPipeline();
 			void createCommandBuffers();
 			void drawFrame();
+			void recreateSwapChain();
+			void recordCommandBuffer(int imageIndex);
 
 			Display_Window Display_Window{ WIDTH, HEIGHT, "Hello Vulkan!" };
 			MyDevice device{ Display_Window };
-			MyEngineSwapChain MyEngineSwapChain{ device, Display_Window.getExtent()};
-			
+			//MyEngineSwapChain MyEngineSwapChain{ device, Display_Window.getExtent()};
+			std::unique_ptr<MyEngineSwapChain> SwapChain;
 			std::unique_ptr<MyPipeline> pipeline;
 			VkPipelineLayout pipelineLayout;
 			std::vector<VkCommandBuffer> commandBuffers;
