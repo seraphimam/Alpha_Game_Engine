@@ -1,6 +1,7 @@
 #include "Alpha_Model.h"
 
 #include <cassert>
+#include <iostream>
 
 namespace dev {
 	Alpha_Model::Alpha_Model(MyDevice& device, const std::vector<Vertex>& vertices) : device{ device } {
@@ -50,17 +51,24 @@ namespace dev {
 	}
 
 	std::vector<VkVertexInputAttributeDescription> Alpha_Model::Vertex::getAttributeDescriptions() {
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(1);
+		std::cout << "attr desc test\n";
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
+
+		std::cout << "desc vec test\n";
 
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
 		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
 		attributeDescriptions[0].offset = offsetof(Vertex, position);
 
+		std::cout << "bind 0 test\n";
+
 		attributeDescriptions[1].binding = 0;
 		attributeDescriptions[1].location = 1;
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+		std::cout << "bind 1 test\n";
 
 		return attributeDescriptions;
 	}

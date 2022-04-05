@@ -143,10 +143,12 @@ namespace dev {
         auto vertCode = readFile(vertFilepath);
         auto fragCode = readFile(fragFilepath);
 
-        //std::cout << "vert code: " + vertFilepath;
+        std::cout << "vert code: " + vertFilepath + "\n";
 
         createShaderModule(vertCode, &vertShaderModule);
         createShaderModule(fragCode, &fragShaderModule);
+
+        std::cout << "shader module test\n";
 
         VkPipelineShaderStageCreateInfo shaderStages[2];
         shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -165,8 +167,13 @@ namespace dev {
         shaderStages[1].pNext = nullptr;
         shaderStages[1].pSpecializationInfo = nullptr;
 
+        std::cout << "shader stage test \n ";
+
         auto bindingDescriptions = Alpha_Model::Vertex::getBindingDescriptions();
+        std::cout << "binding desc test\n ";
         auto attributeDescriptions = Alpha_Model::Vertex::getAttributeDescriptions();
+        std::cout << "desc test \n ";
+
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -180,6 +187,7 @@ namespace dev {
         viewportInfo.pViewports = &configInfo.viewport;
         viewportInfo.scissorCount = 1;
         viewportInfo.pScissors = &configInfo.scissor;*/
+        std::cout << "vertex input test \n ";
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -198,10 +206,12 @@ namespace dev {
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(MyEngineDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+        std::cout << "info setup test\n";
+        /*if (vkCreateGraphicsPipelines(MyEngineDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create grapics pipeline");
         }
-
+        */
+        std::cout << "create pipeline test \n ";
         //std::cout << "Vertext Shader Code Size: " << vertCode.size() << '\n';
         //std::cout << "Fragment Shader Code Size: " << fragCode.size() << '\n';
     }

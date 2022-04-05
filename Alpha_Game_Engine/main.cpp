@@ -9,6 +9,7 @@ int main() {
 	dev::App app{};
 
 	try {
+		//std::cout << "main test";
 		app.run();
 	}
 	catch (const std::exception& e) {

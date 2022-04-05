@@ -2,9 +2,11 @@
 
 #include <array>
 #include <stdexcept>
+#include <iostream>
 
 namespace dev {
 	App::App() {
+		std::cout << "app test\n";
 		loadModels();
 		createPipelineLayout();
 		recreateSwapChain();
@@ -25,6 +27,7 @@ namespace dev {
 	}
 
 	void App::loadModels() {
+		std::cout << "load model test\n";
 		std::vector<Alpha_Model::Vertex> vertices{
 			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -35,6 +38,7 @@ namespace dev {
 	}
 
 	void App::createPipelineLayout() {
+		std::cout << "pipeline layout test\n";
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 0;
@@ -48,35 +52,65 @@ namespace dev {
 	}
 
 	void App::createPipeline() {
+		assert(SwapChain != nullptr && "Cannot create pipeline before swap chain");
+		assert(pipelineLayout != nullptr && "Cannot create pipeline before layout");
+		//std::cout << "pipeline test\n";
 		//auto pipelineConfig = MyPipeline::defaultPipelineConfigInfo(SwapChain->width(), SwapChain->height());
 		PipelineConfigInfo pipelineConfig{};
 		MyPipeline::defaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = SwapChain->getRenderPass();
+		std::cout << "render pass test\n";
 		pipelineConfig.pipelineLayout = pipelineLayout;
+
+		std::cout << "layout test\n";
 		pipeline = std::make_unique<MyPipeline>(
 			device,
 			"shaders/shader_test.vert.spv",
 			"shaders/shader_test.frag.spv",
 			pipelineConfig);
+		std::cout << "pipeline setup test\n";
 	}
 
 	void App::recreateSwapChain() {
+		std::cout << "swap chain create test\n";
 		auto extent = Display_Window.getExtent();
 
+		//std::cout << "before while test\n";
 		while (extent.width == 0 || extent.height == 0) {
+
+			//std::cout << "while test\n";
 			extent = Display_Window.getExtent();
 
+			//std::cout << "before wait test\n";
 			glfwWaitEvents();
 		}
 
+		//std::cout << "after while test\n";
 		vkDeviceWaitIdle(device.device());
+
+		if (SwapChain == nullptr) {
+			SwapChain = std::make_unique<MyEngineSwapChain>(device, extent);
+		}
+		else {
+			SwapChain = std::make_unique<MyEngineSwapChain>(device, extent, std::move(SwapChain));
+		
+			if (SwapChain->imageCount() != commandBuffers.size()) {
+				freeCommandBuffers();
+				createCommandBuffers();
+			}
+		}
+
+		std::cout << "after idle test\n";
 		SwapChain = nullptr;
 		SwapChain = std::make_unique<MyEngineSwapChain>(device, extent);
+
+		std::cout << "swap chain unique test\n";
 		createPipeline();
 		
 	}
 
 	void App::createCommandBuffers() {
+		std::cout << "command buffer test\n";
 		commandBuffers.resize(SwapChain->imageCount());
 
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -132,7 +166,18 @@ namespace dev {
 
 	}//end createCommandBuffers()
 
+	void App::freeCommandBuffers() {
+		vkFreeCommandBuffers(device.device(), device.getCommandPool(),
+			static_cast<float>(commandBuffers.size()),
+			commandBuffers.data()
+		);
+
+		commandBuffers.clear();
+	}
+
 	void App::recordCommandBuffer(int imageIndex) {
+		//std::cout << "image index: " + imageIndex;
+
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
