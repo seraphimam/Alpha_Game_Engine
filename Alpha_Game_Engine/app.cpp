@@ -199,9 +199,9 @@ namespace dev {
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
-		VkClearValue clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
+		/*VkClearValue clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+		renderPassInfo.clearValueCount = 2;
+		renderPassInfo.pClearValues = &clearColor;*/
 
 		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

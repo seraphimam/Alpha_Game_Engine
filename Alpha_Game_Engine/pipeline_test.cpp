@@ -160,7 +160,7 @@ namespace dev {
         shaderStages[0].pSpecializationInfo = nullptr;
 
         shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_VERTEX_BIT;
+        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         shaderStages[1].module = fragShaderModule;
         shaderStages[1].pName = "main";
         shaderStages[1].flags = 0;
@@ -206,11 +206,14 @@ namespace dev {
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
+        pipelineInfo.renderPass = configInfo.renderPass;
+        pipelineInfo.subpass = configInfo.subpass;
+
         std::cout << "info setup test\n";
-        /*if (vkCreateGraphicsPipelines(MyEngineDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+        if (vkCreateGraphicsPipelines(MyEngineDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create grapics pipeline");
         }
-        */
+        
         std::cout << "create pipeline test \n ";
         //std::cout << "Vertext Shader Code Size: " << vertCode.size() << '\n';
         //std::cout << "Fragment Shader Code Size: " << fragCode.size() << '\n';
