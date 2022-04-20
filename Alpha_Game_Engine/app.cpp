@@ -35,7 +35,7 @@ namespace dev {
 			drawFrame();
 			//glfwSetKeyCallback(Display_Window.getGLFW(), key_callback);
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E) == GLFW_PRESS && !hold) {
-				m = (m + 1) % 2;
+				m = (m + 1) % 3;
 				loadGameObjects(m);
 				hold = 1;
 			}
@@ -103,6 +103,25 @@ namespace dev {
 			{{0.8f, 0.5f}, {0.0f, 0.0f, 1.0f}}
 		};
 
+		std::vector<Alpha_Model::Vertex> vertices3{
+		};
+
+		int steps = 60;
+		float angle = glm::two_pi<float>() / steps;
+
+		for (int i = 0; i <= steps; i++) {
+			float x = 0.5 * glm::sin(angle * i);
+			float y = 0.5 * glm::cos(angle * i);
+
+			vertices3.push_back(
+				{ {x, y}, {0.0f, 1.0f, 0.0f} }
+			);
+
+			vertices3.push_back(
+				{ {0, 0}, {0.0f, 1.0f, 0.0f} }
+			);
+		}
+
 		if (mode == 1) {
 			auto model = std::make_shared<Alpha_Model>(device, vertices);
 
@@ -115,7 +134,7 @@ namespace dev {
 
 			objects.push_back(std::move(sq));
 		}
-		else {
+		else if (mode == 0) {
 			auto model2 = std::make_shared<Alpha_Model>(device, vertices2);
 			auto triangle = GameObject::createGameObject();
 			triangle.model = model2;
@@ -125,6 +144,17 @@ namespace dev {
 			triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
 			objects.push_back(std::move(triangle));
+		}
+		else {
+			auto model3 = std::make_shared<Alpha_Model>(device, vertices3);
+			auto circle = GameObject::createGameObject();
+			circle.model = model3;
+			circle.color = { 0.1f, 0.8f, 0.1f };
+			circle.transform2d.translation.x = 0.2f;
+			circle.transform2d.scale = { 1.0f, 1.0f };
+			circle.transform2d.rotation = 0.25f * glm::two_pi<float>();
+
+			objects.push_back(std::move(circle));
 		}
 		
 	}
