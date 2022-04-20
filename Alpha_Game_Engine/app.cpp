@@ -49,6 +49,24 @@ namespace dev {
 					obj.transform2d.translation.y -= 0.1f;
 				}
 			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_A)) {
+				for (auto& obj : objects) {
+					obj.transform2d.translation.x -= 0.1f;
+				}
+			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_S)) {
+				for (auto& obj : objects) {
+					obj.transform2d.translation.y += 0.1f;
+				}
+			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_D)) {
+				for (auto& obj : objects) {
+					obj.transform2d.translation.x += 0.1f;
+				}
+			}
 		}
 
 		vkDeviceWaitIdle(device.device());
