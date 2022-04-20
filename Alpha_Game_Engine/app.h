@@ -23,10 +23,12 @@ namespace dev {
 			App& operator = (const App&) = delete;
 
 			void run();
+			int m = 0;
+			int hold = 0;
 
 		private:
 			//void loadModels();
-			void loadGameObjects();
+			void loadGameObjects(int mode);
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
@@ -35,6 +37,8 @@ namespace dev {
 			void recreateSwapChain();
 			void recordCommandBuffer(int imageIndex);
 			void renderGameObjects(VkCommandBuffer commandBuffer);
+			//void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 
 			Display_Window Display_Window{ WIDTH, HEIGHT, "Hello Vulkan!" };
 			MyDevice device{ Display_Window };

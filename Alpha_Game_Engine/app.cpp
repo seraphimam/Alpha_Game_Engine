@@ -19,7 +19,7 @@ namespace dev {
 
 	App::App() {
 		std::cout << "app test\n";
-		loadGameObjects();
+		loadGameObjects(m);
 		createPipelineLayout();
 		recreateSwapChain();
 		createCommandBuffers();
@@ -33,13 +33,30 @@ namespace dev {
 		while (!Display_Window.shouldClose()) {
 			glfwPollEvents();
 			drawFrame();
-			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E)) {
+			//glfwSetKeyCallback(Display_Window.getGLFW(), key_callback);
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E) == GLFW_PRESS && !hold) {
+				m = (m + 1) % 2;
+				loadGameObjects(m);
+				hold = 1;
+			}
 
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E) == GLFW_RELEASE && hold) {
+				hold = 0;
+			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_W)) {
+				for (auto& obj : objects) {
+					obj.transform2d.translation.y -= 0.1f;
+				}
 			}
 		}
 
 		vkDeviceWaitIdle(device.device());
 	}
+
+	/*void* key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+	}*/
 
 	/*void App::loadModels() {
 		std::cout << "load model test\n";
@@ -52,8 +69,9 @@ namespace dev {
 		model = std::make_unique<Alpha_Model>(device, vertices);
 	}*/
 
-	void App::loadGameObjects() {
+	void App::loadGameObjects(int mode) {
 		std::cout << "load GO test\n";
+		objects.clear();
 		std::vector<Alpha_Model::Vertex> vertices{
 			{{-0.2f, 0.2f}, {1.0f, 0.0f, 0.0f}},
 			{{-0.2f, -0.2f}, {0.0f, 1.0f, 0.0f}},
@@ -67,27 +85,30 @@ namespace dev {
 			{{0.8f, 0.5f}, {0.0f, 0.0f, 1.0f}}
 		};
 
-		auto model = std::make_shared<Alpha_Model>(device, vertices);
+		if (mode == 1) {
+			auto model = std::make_shared<Alpha_Model>(device, vertices);
 
-		auto triangle = GameObject::createGameObject();
-		triangle.model = model;
-		triangle.color = { 0.1f, 0.8f, 0.1f };
-		triangle.transform2d.translation.x = 0.2f;
-		triangle.transform2d.scale = { 1.0f, 1.0f };
-		triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
+			auto sq = GameObject::createGameObject();
+			sq.model = model;
+			sq.color = { 0.1f, 0.8f, 0.1f };
+			sq.transform2d.translation.x = 0.2f;
+			sq.transform2d.scale = { 1.0f, 1.0f };
+			sq.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
-		objects.push_back(std::move(triangle));
+			objects.push_back(std::move(sq));
+		}
+		else {
+			auto model2 = std::make_shared<Alpha_Model>(device, vertices2);
+			auto triangle = GameObject::createGameObject();
+			triangle.model = model2;
+			triangle.color = { 0.1f, 0.8f, 0.1f };
+			triangle.transform2d.translation.x = 0.2f;
+			triangle.transform2d.scale = { 1.0f, 1.0f };
+			triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
-		auto model2 = std::make_shared<Alpha_Model>(device, vertices2);
-
-		auto sq = GameObject::createGameObject();
-		sq.model = model2;
-		sq.color = { 0.1f, 0.8f, 0.1f };
-		sq.transform2d.translation.x = 0.2f;
-		sq.transform2d.scale = { 1.0f, 1.0f };
-		sq.transform2d.rotation = 0.25f * glm::two_pi<float>();
-
-		objects.push_back(std::move(sq));
+			objects.push_back(std::move(triangle));
+		}
+		
 	}
 
 	void App::createPipelineLayout() {
