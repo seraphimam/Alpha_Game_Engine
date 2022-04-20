@@ -160,6 +160,7 @@
     <ClInclude Include="app.h" />
     <ClInclude Include="device.h" />
     <ClInclude Include="display_window.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="swap_chain.h" />
     <ClInclude Include="pipeline_test.h" />
   </ItemGroup>

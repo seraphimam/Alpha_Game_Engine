@@ -1,6 +1,7 @@
 #pragma once
 
 //#include "device.h"
+#include "GameObject.h"
 #include "pipeline_test.h"
 #include "swap_chain.h"
 #include "display_window.h"
@@ -24,7 +25,8 @@ namespace dev {
 			void run();
 
 		private:
-			void loadModels();
+			//void loadModels();
+			void loadGameObjects();
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
@@ -32,6 +34,7 @@ namespace dev {
 			void drawFrame();
 			void recreateSwapChain();
 			void recordCommandBuffer(int imageIndex);
+			void renderGameObjects(VkCommandBuffer commandBuffer);
 
 			Display_Window Display_Window{ WIDTH, HEIGHT, "Hello Vulkan!" };
 			MyDevice device{ Display_Window };
@@ -40,7 +43,8 @@ namespace dev {
 			std::unique_ptr<MyPipeline> pipeline;
 			VkPipelineLayout pipelineLayout;
 			std::vector<VkCommandBuffer> commandBuffers;
-			std::unique_ptr<Alpha_Model> model;
+			//std::unique_ptr<Alpha_Model> model;
+			std::vector<GameObject> objects;
 			
 			/*MyPipeline MyPipeline{
 				device,

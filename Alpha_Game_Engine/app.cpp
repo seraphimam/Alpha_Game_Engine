@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include <array>
 #include <stdexcept>
@@ -11,13 +12,14 @@
 namespace dev {
 		
 	struct SimplePushConstantData {
+		glm::mat2 transform{ 1.f };
 		glm::vec2 offset;
 		alignas(16) glm::vec3 color;
 	};
 
 	App::App() {
 		std::cout << "app test\n";
-		loadModels();
+		loadGameObjects();
 		createPipelineLayout();
 		recreateSwapChain();
 		createCommandBuffers();
@@ -31,12 +33,15 @@ namespace dev {
 		while (!Display_Window.shouldClose()) {
 			glfwPollEvents();
 			drawFrame();
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E)) {
+
+			}
 		}
 
 		vkDeviceWaitIdle(device.device());
 	}
 
-	void App::loadModels() {
+	/*void App::loadModels() {
 		std::cout << "load model test\n";
 		std::vector<Alpha_Model::Vertex> vertices{
 			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -45,6 +50,44 @@ namespace dev {
 		};
 
 		model = std::make_unique<Alpha_Model>(device, vertices);
+	}*/
+
+	void App::loadGameObjects() {
+		std::cout << "load GO test\n";
+		std::vector<Alpha_Model::Vertex> vertices{
+			{{-0.2f, 0.2f}, {1.0f, 0.0f, 0.0f}},
+			{{-0.2f, -0.2f}, {0.0f, 1.0f, 0.0f}},
+			{{0.2f, 0.2f}, {0.0f, 0.0f, 1.0f}},
+			{{0.2f, -0.2f}, {1.0f, 1.0f, 1.0f}}
+		};
+
+		std::vector<Alpha_Model::Vertex> vertices2{
+			{{0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{0.8f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+		};
+
+		auto model = std::make_shared<Alpha_Model>(device, vertices);
+
+		auto triangle = GameObject::createGameObject();
+		triangle.model = model;
+		triangle.color = { 0.1f, 0.8f, 0.1f };
+		triangle.transform2d.translation.x = 0.2f;
+		triangle.transform2d.scale = { 1.0f, 1.0f };
+		triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
+
+		objects.push_back(std::move(triangle));
+
+		auto model2 = std::make_shared<Alpha_Model>(device, vertices2);
+
+		auto sq = GameObject::createGameObject();
+		sq.model = model2;
+		sq.color = { 0.1f, 0.8f, 0.1f };
+		sq.transform2d.translation.x = 0.2f;
+		sq.transform2d.scale = { 1.0f, 1.0f };
+		sq.transform2d.rotation = 0.25f * glm::two_pi<float>();
+
+		objects.push_back(std::move(sq));
 	}
 
 	void App::createPipelineLayout() {
@@ -193,9 +236,9 @@ namespace dev {
 
 	void App::recordCommandBuffer(int imageIndex) {
 		//std::cout << "image index: " + imageIndex;
-		static int maxFrameRate = 60;
+		/*static int maxFrameRate = 60;
 		static int frame = 0;
-		frame = (frame + 1) % maxFrameRate;
+		frame = (frame + 1) % maxFrameRate;*/
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -236,21 +279,20 @@ namespace dev {
 		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
 		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 
-		pipeline->bind(commandBuffers[imageIndex]);
-		//vkCmdDraw(commandBuffers[imageIndex], 3, 1, 0, 0);
-		model->bind(commandBuffers[imageIndex]);
+		renderGameObjects(commandBuffers[imageIndex]);
 
-		for (int i = 0; i < 4; i++) {
-			SimplePushConstantData pushData{};
-			pushData.offset = { -1.0f + frame * 0.05f, -0.4f + i * 0.25f };
-			pushData.color = { 0.0f, 0.0f, 0.2f + 0.2f * i };
+		//pipeline->bind(commandBuffers[imageIndex]);
+		////vkCmdDraw(commandBuffers[imageIndex], 3, 1, 0, 0);
+		//model->bind(commandBuffers[imageIndex]);
 
-			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout, 
-				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-				sizeof(SimplePushConstantData), &pushData);
+		//
+		//SimplePushConstantData pushData{};
+		//pushData.offset = { -1.0f + frame * 0.05f, 0.0f  };
+		//pushData.color = { 0.0f, 0.0f, 0.0f };
 
-			model->draw(commandBuffers[imageIndex]);
-		}
+		//vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout, 
+		//	VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+		//	sizeof(SimplePushConstantData), &pushData);
 
 		//model->draw(commandBuffers[imageIndex]);
 
@@ -287,6 +329,37 @@ namespace dev {
 			throw std::runtime_error("failed to present swap chain image");
 		}
 	
-	}
+	}//end drawFrame
+
+	void App::renderGameObjects(VkCommandBuffer commandBuffer) {
+
+		//int i = 0;
+		//	for (auto& obj : objects) {
+		//		i += 1;
+		//		//obj.transform2d.translation.y = 0.2f * i;
+		//		obj.transform2d.rotation = glm::mod<float>(obj.transform2d.rotation + 0.001f * i, 2.0f * glm::pi<float>());
+		//	}
+		
+
+		pipeline->bind(commandBuffer);
+
+		for (auto& obj : objects) {
+			//obj.transform2d.scale = { 1.0f, 1.0f };
+			//obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+
+			SimplePushConstantData pushData{};
+			pushData.offset = obj.transform2d.translation;
+			pushData.color = obj.color;
+			pushData.transform = obj.transform2d.mat2();
+
+			vkCmdPushConstants(commandBuffer, pipelineLayout,
+				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+				sizeof(SimplePushConstantData), &pushData);
+
+			obj.model->bind(commandBuffer);
+			obj.model->draw(commandBuffer);
+		}
+
+	}//end renderGameObjects
 
 }

@@ -36,6 +36,8 @@ namespace dev {
 
 			bool framebufferResized = false;
 
+			GLFWwindow* getGLFW() const { return window; }
+
 		private:
 			static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 			void initWindow();

@@ -56,5 +56,8 @@
     <ClInclude Include="Alpha_Model.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
