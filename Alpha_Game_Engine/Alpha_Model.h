@@ -25,8 +25,10 @@ namespace dev {
 			void bind(VkCommandBuffer commandBuffer);
 			void draw(VkCommandBuffer commandBuffer);
 
-		private:
 			void createVertexBuffers(const std::vector<Vertex>& vertices);
+
+		private:
+			
 
 			MyDevice& device;
 			VkBuffer vertexBuffer;

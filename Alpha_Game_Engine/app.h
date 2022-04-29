@@ -40,7 +40,7 @@ namespace dev {
 			//void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
-			Display_Window Display_Window{ WIDTH, HEIGHT, "Hello Vulkan!" };
+			Display_Window Display_Window{ WIDTH, HEIGHT, "Random Demo Window" };
 			MyDevice device{ Display_Window };
 			//MyEngineSwapChain MyEngineSwapChain{ device, Display_Window.getExtent()};
 			std::unique_ptr<MyEngineSwapChain> SwapChain;

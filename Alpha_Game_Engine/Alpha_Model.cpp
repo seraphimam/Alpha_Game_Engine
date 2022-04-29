@@ -2,11 +2,13 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 
 namespace dev {
 	Alpha_Model::Alpha_Model(MyDevice& device, const std::vector<Vertex>& vertices) : device{ device } {
-		createVertexBuffers(vertices);
+		//createVertexBuffers(vertices);
 	}
+
 
 	Alpha_Model::~Alpha_Model() {
 		vkDestroyBuffer(device.device(), vertexBuffer, nullptr);

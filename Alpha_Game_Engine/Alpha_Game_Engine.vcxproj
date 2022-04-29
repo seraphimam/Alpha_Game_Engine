@@ -151,6 +151,7 @@
     <ClCompile Include="app.cpp" />
     <ClCompile Include="device.cpp" />
     <ClCompile Include="display_window.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pipeline_test.cpp" />
     <ClCompile Include="swap_chain.cpp" />

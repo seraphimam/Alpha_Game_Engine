@@ -40,32 +40,46 @@ namespace dev {
 				hold = 1;
 			}
 
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_Q) == GLFW_PRESS && !hold) {
+				objects[0].rotate(5.0f);
+
+				//std::cout << "rotating\n";
+
+				/*
+				for (int i = 0; i < objects[0].transform2d.positions.size(); i++) {
+					std::cout << "X" << i << ": " << objects[0].transform2d.positions[i].x << "\n";
+					std::cout << "Y" << i << ": " << objects[0].transform2d.positions[i].y << "\n";
+				}
+				*/
+					
+			}
+
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_E) == GLFW_RELEASE && hold) {
 				hold = 0;
 			}
 
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_F)) {
+				objects[0].transform2d.scale.x += 0.2f;
+				objects[0].transform2d.scale.y += 0.2f;
+			}
+
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_W)) {
-				for (auto& obj : objects) {
-					obj.transform2d.translation.y -= 0.1f;
-				}
+				objects[0].moveUp();
+				//for (auto& obj : objects) {
+				//	obj.transform2d.translation.y -= 0.1f;
+				//}
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_A)) {
-				for (auto& obj : objects) {
-					obj.transform2d.translation.x -= 0.1f;
-				}
+				objects[0].moveLeft();
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_S)) {
-				for (auto& obj : objects) {
-					obj.transform2d.translation.y += 0.1f;
-				}
+				objects[0].moveDown();
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_D)) {
-				for (auto& obj : objects) {
-					obj.transform2d.translation.x += 0.1f;
-				}
+				objects[0].moveRight();
 			}
 		}
 
@@ -88,19 +102,57 @@ namespace dev {
 	}*/
 
 	void App::loadGameObjects(int mode) {
-		std::cout << "load GO test\n";
+		objects.clear();
+
+		if (mode == 1) {
+			GameObject sq = GameObject(device);
+
+			sq.makeSquare(0.5f, 0.5f, 0.3f, 0.3f);
+			sq.color = { 0.1f, 0.8f, 0.1f };
+
+			objects.push_back(std::move(sq));
+		}
+		else if (mode == 0) {
+			GameObject triangle = GameObject(device);
+
+			triangle.makeTriangle(-0.8f, -0.5f , -0.8f, -0.8f, -0.5f, -0.5f );
+			triangle.color = { 0.1f, 0.8f, 0.1f };
+
+			objects.push_back(std::move(triangle));
+		}
+		else {
+			GameObject circle = GameObject(device);
+
+			circle.makeCircle(0.8f, 0.8f, 0.3f);
+			circle.color = { 0.1f, 0.8f, 0.1f };
+
+			objects.push_back(std::move(circle));
+		}
+	}
+
+	/*
+	void App::loadGameObjects(int mode) {
+		//std::cout << "load GO test\n";
 		objects.clear();
 		std::vector<Alpha_Model::Vertex> vertices{
 			{{-0.2f, 0.2f}, {1.0f, 0.0f, 0.0f}},
+			{{-0.2f, -0.2f}, {0.0f, 1.0f, 0.0f}},
+			{{0.2f, 0.2f}, {0.0f, 0.0f, 1.0f}},
 			{{-0.2f, -0.2f}, {0.0f, 1.0f, 0.0f}},
 			{{0.2f, 0.2f}, {0.0f, 0.0f, 1.0f}},
 			{{0.2f, -0.2f}, {1.0f, 1.0f, 1.0f}}
 		};
 
 		std::vector<Alpha_Model::Vertex> vertices2{
-			{{0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{0.8f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+			{{-0.8f, -0.8f}, {1.0f, 0.0f, 0.0f}},
+			{{-0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{-0.8f, -0.5f}, {0.0f, 0.0f, 1.0f}},
+		};
+
+		std::vector<Alpha_Model::Vertex> vt{
+			{ {0.8f, -0.8f}, { 1.0f, 0.0f, 0.0f }},
+			{ {0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} },
+			{ {0.8f, -0.5f}, {0.0f, 0.0f, 1.0f} }
 		};
 
 		std::vector<Alpha_Model::Vertex> vertices3{
@@ -109,12 +161,18 @@ namespace dev {
 		int steps = 60;
 		float angle = glm::two_pi<float>() / steps;
 
-		for (int i = 0; i <= steps; i++) {
-			float x = 0.5 * glm::sin(angle * i);
-			float y = 0.5 * glm::cos(angle * i);
+		for (int i = 0; i < steps; i++) {
+			float x1 = 0.5 * glm::sin(angle * i);
+			float x2 = 0.5 * glm::sin(angle * (i+1));
+			float y1 = 0.5 * glm::cos(angle * i);
+			float y2 = 0.5 * glm::cos(angle * (i + 1));
 
 			vertices3.push_back(
-				{ {x, y}, {0.0f, 1.0f, 0.0f} }
+				{ {x1, y1}, {0.0f, 1.0f, 0.0f} }
+			);
+
+			vertices3.push_back(
+				{ {x2, y2}, {0.0f, 1.0f, 0.0f} }
 			);
 
 			vertices3.push_back(
@@ -125,39 +183,45 @@ namespace dev {
 		if (mode == 1) {
 			auto model = std::make_shared<Alpha_Model>(device, vertices);
 
-			auto sq = GameObject::createGameObject();
+			GameObject sq = GameObject(device);
 			sq.model = model;
 			sq.color = { 0.1f, 0.8f, 0.1f };
-			sq.transform2d.translation.x = 0.2f;
-			sq.transform2d.scale = { 1.0f, 1.0f };
-			sq.transform2d.rotation = 0.25f * glm::two_pi<float>();
+			//sq.transform2d.translation.x = 0.2f;
+			//sq.transform2d.scale = { 1.0f, 1.0f };
+			//sq.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
 			objects.push_back(std::move(sq));
 		}
 		else if (mode == 0) {
 			auto model2 = std::make_shared<Alpha_Model>(device, vertices2);
+			auto mod = std::make_shared<Alpha_Model>(device, vt);
 			auto triangle = GameObject::createGameObject();
 			triangle.model = model2;
 			triangle.color = { 0.1f, 0.8f, 0.1f };
-			triangle.transform2d.translation.x = 0.2f;
-			triangle.transform2d.scale = { 1.0f, 1.0f };
-			triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
+			auto t1 = GameObject::createGameObject();
+			t1.model = mod;
+			t1.color = { 0.1f, 0.8f, 0.1f };
+			//triangle.transform2d.translation.x = 0.2f;
+			//triangle.transform2d.scale = { 1.0f, 1.0f };
+			//triangle.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
 			objects.push_back(std::move(triangle));
+			objects.push_back(std::move(t1));
 		}
 		else {
 			auto model3 = std::make_shared<Alpha_Model>(device, vertices3);
 			auto circle = GameObject::createGameObject();
 			circle.model = model3;
 			circle.color = { 0.1f, 0.8f, 0.1f };
-			circle.transform2d.translation.x = 0.2f;
-			circle.transform2d.scale = { 1.0f, 1.0f };
-			circle.transform2d.rotation = 0.25f * glm::two_pi<float>();
+			//circle.transform2d.translation.x = 0.2f;
+			//circle.transform2d.scale = { 1.0f, 1.0f };
+			//circle.transform2d.rotation = 0.25f * glm::two_pi<float>();
 
 			objects.push_back(std::move(circle));
 		}
 		
-	}
+	}//end loadGameObject()
+	*/
 
 	void App::createPipelineLayout() {
 		std::cout << "pipeline layout test\n";
@@ -415,6 +479,7 @@ namespace dev {
 		for (auto& obj : objects) {
 			//obj.transform2d.scale = { 1.0f, 1.0f };
 			//obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+			//obj.rotate(30.0f);
 
 			SimplePushConstantData pushData{};
 			pushData.offset = obj.transform2d.translation;
@@ -425,6 +490,8 @@ namespace dev {
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
 				sizeof(SimplePushConstantData), &pushData);
 
+			
+			obj.bindVertices();
 			obj.model->bind(commandBuffer);
 			obj.model->draw(commandBuffer);
 		}
