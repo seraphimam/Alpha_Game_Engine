@@ -43,8 +43,12 @@ namespace dev {
 			
 			id_t id;
 			bool inControl;
+			bool isCircle = false;
 			const std::string type;
 			float speed;
+			float w = -0.1f;
+			float h = -0.1f;
+			float r = -0.1f;
 
 			GameObject(MyDevice& device);
 
@@ -61,12 +65,19 @@ namespace dev {
 
 			void bindVertices();
 
+			bool ifObjectsCollide(GameObject& target);
+
 			std::vector<glm::vec2> calcPos();
 
 			GameObject(const GameObject&) = delete;
 			GameObject& operator=(const GameObject&) = delete;
 			GameObject(GameObject&&) = default;
 			GameObject& operator=(GameObject&&) = default;
+
+			glm::vec3 getLineEquation(glm::vec2 p1, glm::vec2 p2);
+			std::vector<glm::vec3> getshapeEquations(std::vector<glm::vec2> shape);
+			glm::vec2 getIntersection(glm::vec3 line1, glm::vec3 line2);
+			bool isPointInShapeLine(glm::vec2 point, std::vector<glm::vec2> shape);
 
 			std::shared_ptr<Alpha_Model> model{};
 			glm::vec3 color{0.0f, 0.0f, 0.0f};

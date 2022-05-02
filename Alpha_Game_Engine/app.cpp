@@ -81,10 +81,11 @@ namespace dev {
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_D)) {
 				objects[0].moveRight();
 			}
+
 		}
 
 		vkDeviceWaitIdle(device.device());
-	}
+	}//end run
 
 	/*void* key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
@@ -128,6 +129,20 @@ namespace dev {
 
 			objects.push_back(std::move(circle));
 		}
+
+		/*GameObject staticSq = GameObject(device);
+
+		staticSq.makeSquare(0.5f, 0.5f, 0.3f, 0.3f);
+		staticSq.color = { 0.1f, 0.8f, 0.1f };
+
+		objects.push_back(std::move(staticSq));*/
+
+		GameObject staticC = GameObject(device);
+
+		staticC.makeCircle(-0.5f, -0.5f, 0.3f);
+		staticC.color = { 0.1f, 0.8f, 0.1f };
+
+		objects.push_back(std::move(staticC));
 	}
 
 	/*
@@ -476,24 +491,37 @@ namespace dev {
 
 		pipeline->bind(commandBuffer);
 
-		for (auto& obj : objects) {
-			//obj.transform2d.scale = { 1.0f, 1.0f };
-			//obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
-			//obj.rotate(30.0f);
+		for (int i = 0; i < objects.size(); i++) {
+			//objects[i].transform2d.scale = { 1.0f, 1.0f };
+			//objects[i].transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+			objects[i].rotate(30.0f);
+
+			for (int j = 0; j < objects.size(); j++) {
+				//std::cout << j;
+				if (j != i) {
+					if (objects[i].ifObjectsCollide(objects[j])) {
+						
+						//std::cout << "collide\n";
+					}
+					//else {
+					//	//std::cout << " no collision \n";
+					//}
+				}
+			}
 
 			SimplePushConstantData pushData{};
-			pushData.offset = obj.transform2d.translation;
-			pushData.color = obj.color;
-			pushData.transform = obj.transform2d.mat2();
+			pushData.offset = objects[i].transform2d.translation;
+			pushData.color = objects[i].color;
+			pushData.transform = objects[i].transform2d.mat2();
 
 			vkCmdPushConstants(commandBuffer, pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
 				sizeof(SimplePushConstantData), &pushData);
 
 			
-			obj.bindVertices();
-			obj.model->bind(commandBuffer);
-			obj.model->draw(commandBuffer);
+			objects[i].bindVertices();
+			objects[i].model->bind(commandBuffer);
+			objects[i].model->draw(commandBuffer);
 		}
 
 	}//end renderGameObjects

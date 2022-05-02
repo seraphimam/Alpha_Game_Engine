@@ -20,6 +20,8 @@ namespace dev {
 
 	void GameObject::makeTriangle(float x1, float y1, float x2, float y2, float x3, float y3) {
 
+		isCircle = false;
+
 		std::vector<Alpha_Model::Vertex> triangle{
 			{{x1, y1}, {1.0f, 0.0f, 0.0f}},
 			{{x2, y2}, {0.0f, 1.0f, 0.0f}},
@@ -39,6 +41,11 @@ namespace dev {
 	}//end makeTriangle
 
 	void GameObject::makeSquare(float x, float y, float width, float height) {
+
+		isCircle = false;
+		r = -0.1f;
+		w = width;
+		h = height;
 
 		std::vector<Alpha_Model::Vertex> square{
 			{{x, y}, {1.0f, 0.0f, 0.0f}},
@@ -65,6 +72,11 @@ namespace dev {
 	}//end makeSquare
 
 	void GameObject::makeCircle(float x, float y, float radius) {
+
+		isCircle = true;
+		w = -0.1f;
+		h = -0.1f;
+		r = radius;
 
 		std::vector<Alpha_Model::Vertex> circle{
 		};
@@ -191,4 +203,326 @@ namespace dev {
 		
 		model->createVertexBuffers(v);
 	}
-}
+
+	//collision for only square and circle
+	bool GameObject::ifObjectsCollide(GameObject& target) {
+		std::vector<glm::vec2> selfCoords = calcPos();
+		std::vector<glm::vec2> targetCoords = target.calcPos();
+
+		if (isCircle && target.isCircle) {
+			if (glm::distance(selfCoords[0], targetCoords[0]) > r + target.r) {
+				color = { 0.0f, 1.0f, 0.0f };
+				target.color = { 0.0f, 1.0f, 0.0f };
+				return false;
+			}
+			else {
+				color = { 1.0f, 0.0f, 0.0f };
+				target.color = { 1.0f, 0.0f, 0.0f };
+				return true;
+			}
+		}
+		else if (isCircle) {
+			float tMinX = targetCoords[0].x;
+			float tMaxX = targetCoords[0].x + w;
+			float tMinY = targetCoords[0].y - h;
+			float tMaxY = targetCoords[0].y;
+
+			std::vector<glm::vec2> p4 = { 
+				{tMinX, tMinY},
+				{tMinX, tMaxY},
+				{tMaxX, tMinY},
+				{tMaxX, tMaxY}
+			};
+
+			for (int i = 0; i < p4.size(); i++) {
+				if (glm::distance(selfCoords[0], p4[i]) <= r) {
+					color = { 1.0f, 0.0f, 0.0f };
+					target.color = { 1.0f, 0.0f, 0.0f };
+					return true;
+				}
+			}
+			color = { 0.0f, 1.0f, 0.0f };
+			target.color = { 0.0f, 1.0f, 0.0f };
+			return false;
+		}
+		else if (target.isCircle) {
+			float MinX = selfCoords[0].x;
+			float MaxX = selfCoords[0].x + w;
+			float MinY = selfCoords[0].y - h;
+			float MaxY = selfCoords[0].y;
+
+			std::vector<glm::vec2> p4 = {
+				{MinX, MinY},
+				{MinX, MaxY},
+				{MaxX, MinY},
+				{MaxX, MaxY}
+			};
+
+			for (int i = 0; i < p4.size(); i++) {
+				if (glm::distance(targetCoords[0], p4[i]) <= target.r) {
+					color = { 1.0f, 0.0f, 0.0f };
+					target.color = { 1.0f, 0.0f, 0.0f };
+					return true;
+				}
+			}
+			color = { 0.0f, 1.0f, 0.0f };
+			target.color = { 0.0f, 1.0f, 0.0f };
+			return false;
+		}
+		//2squares
+		else {
+			if (targetCoords[0].x <= selfCoords[0].x + w && targetCoords[0].x >= selfCoords[0].x &&
+				targetCoords[0].y <= selfCoords[0].y && targetCoords[0].y >= selfCoords[0].y - h) {
+				color = { 1.0f, 0.0f, 0.0f };
+				target.color = { 1.0f, 0.0f, 0.0f };
+				return true;
+			}
+			else if (targetCoords[0].x <= selfCoords[0].x + w && targetCoords[0].x >= selfCoords[0].x &&
+				targetCoords[0].y - h <= selfCoords[0].y && targetCoords[0].y - h >= selfCoords[0].y - h) {
+				color = { 1.0f, 0.0f, 0.0f };
+				target.color = { 1.0f, 0.0f, 0.0f };
+				return true;
+			}
+			else if (targetCoords[0].x + w <= selfCoords[0].x + w && targetCoords[0].x + w >= selfCoords[0].x &&
+				targetCoords[0].y <= selfCoords[0].y && targetCoords[0].y >= selfCoords[0].y - h) {
+				color = { 1.0f, 0.0f, 0.0f };
+				target.color = { 1.0f, 0.0f, 0.0f };
+				return true;
+			}
+			else if (targetCoords[0].x + w <= selfCoords[0].x + w && targetCoords[0].x + w >= selfCoords[0].x &&
+				targetCoords[0].y - h <= selfCoords[0].y && targetCoords[0].y - h >= selfCoords[0].y - h) {
+				color = { 1.0f, 0.0f, 0.0f };
+				target.color = { 1.0f, 0.0f, 0.0f };
+				return true;
+			}
+			else{
+				color = { 0.0f, 1.0f, 0.0f };
+				target.color = { 0.0f, 1.0f, 0.0f };
+				return false;
+			}
+		}
+
+	}//end collision for sq/circle
+
+
+	//bool GameObject::ifObjectsCollide(GameObject& target) {
+	//	//calculate position of 2 objects after transformations
+	//	std::vector<glm::vec2> selfCoords = calcPos();
+	//	std::vector<glm::vec2> targetCoords = target.calcPos();
+
+	//	/*float MinX = 2.0f;
+	//	float MinY = 2.0f;
+
+	//	float MaxX = -2.0f;
+	//	float MaxY = -2.0f;
+
+	//	float targetMinX = 2.0f;
+	//	float targetMinY = 2.0f;
+
+	//	float targetMaxX = -2.0f;
+	//	float targetMaxY = -2.0f;
+
+	//	for (int i = 0; i < selfCoords.size(); i++) {
+	//		MinX = glm::min(selfCoords[i].x, MinX);
+	//		MinY = glm::min(selfCoords[i].y, MinX);
+	//		MaxX = glm::max(selfCoords[i].x, MaxX);
+	//		MaxY = glm::max(selfCoords[i].y, MaxY);
+	//	}
+
+	//	for (int i = 0; i < targetCoords.size(); i++) {
+	//		MinX = glm::min(targetCoords[i].x, MinX);
+	//		MinY = glm::min(targetCoords[i].y, MinX);
+	//		MaxX = glm::max(targetCoords[i].x, MaxX);
+	//		MaxY = glm::max(targetCoords[i].y, MaxY);
+	//	}*/
+
+	//	//if both shapes are not circle
+	//	//if (!isCircle && !target.isCircle) {
+	//		std::vector<glm::vec3> selfEq = getshapeEquations(selfCoords);
+	//		std::vector<glm::vec3> targetEq = getshapeEquations(targetCoords);
+
+	//		//std::cout << "self: " << selfEq[0].x;
+
+	//		std::vector<glm::vec2> self2p;
+	//		std::vector<glm::vec2> target2p;
+	//		//std::cout << "poi test\n";
+
+	//		for (int i = 0; i < selfEq.size(); i++) {
+	//			self2p.clear();
+	//			target2p.clear();
+
+	//			for (int j = 0; j < targetEq.size(); j++) {
+	//				glm::vec2 poi = getIntersection(selfEq[i], targetEq[j]);
+
+	//				std::cout << "X: " << poi.x << " Y: " << poi.y << "\n";
+	//				std::cout << "selfX1: " << selfCoords[i].x << " selfY1: " << selfCoords[i].y << "\n";
+	//				std::cout << "targetX1: " << targetCoords[i].x << " targetY1: " << targetCoords[i].y << "\n";
+
+	//				if (i % 3 == 0) {
+	//					self2p.push_back(selfCoords[i]);
+	//					self2p.push_back(selfCoords[(i + 1)]);
+	//				}
+	//				else if (i % 3 == 1) {
+	//					self2p.push_back(selfCoords[(i - 1)]);
+	//					self2p.push_back(selfCoords[(i + 1)]);
+	//				}
+	//				else {
+	//					self2p.push_back(selfCoords[i]);
+	//					self2p.push_back(selfCoords[(i - 1)]);
+	//				}
+
+	//				if (j % 3 == 0) {
+	//					target2p.push_back(targetCoords[j]);
+	//					target2p.push_back(targetCoords[(j + 1)]);
+	//				}
+	//				else if (j % 3 == 1) {
+	//					target2p.push_back(targetCoords[(j - 1)]);
+	//					target2p.push_back(targetCoords[(j + 1)]);
+	//				}
+	//				else {
+	//					target2p.push_back(targetCoords[j]);
+	//					target2p.push_back(targetCoords[(j - 1)]);
+	//				}
+
+
+	//				if (isPointInShapeLine(poi, self2p) && isPointInShapeLine(poi, target2p)) {
+	//					color = { 1.0f, 0.0f, 0.0f };
+	//					target.color = { 1.0f, 0.0f, 0.0f };
+	//					return true;
+	//				}
+	//				else {
+	//					color = { 0.1f, 0.8f, 0.1f };
+	//					target.color = { 0.1f, 0.8f, 0.1f };
+	//					return false;
+	//				}
+	//			}
+	//		}
+	//		
+	//	//}
+	//	//if one of the shapes is circle
+	//	//else {
+	//	//	if (isCircle) {
+	//	//		if (target.isCircle) {
+
+	//	//		}
+	//	//		else {
+
+	//	//		}
+	//	//	}
+	//	//	else {
+
+	//	//	}
+	//	//}//end else (one of the shape is circle)
+
+	//}//end ifObjectsCollide
+
+	//return ax+by+c if format (a->x), (b->y), (c->z)
+	glm::vec3 GameObject::getLineEquation(glm::vec2 p1, glm::vec2 p2) {
+		glm::vec3 points;
+
+		if (p1.x == p2.x) {
+			points.x = 1.0f;
+			points.y = 0.0f;
+			points.z = p1.x;
+		}
+		else if (p1.y == p2.y) {
+			points.x = 0.0f;
+			points.y = 1.0f;
+			points.z = p1.y;
+		}
+		else {
+			float slope = (p2.y - p1.y) / (p2.x - p1.x);
+			//std::cout << "\nSlope: " << slope << "\n";
+
+			//y - y1 = m(x - x1)
+			//mx - y - mx1 + y1
+			//a = m, b = -1, c = -mx1 + y1
+			points.x = slope;
+			points.y = -1.0f;
+			points.z = p1.y - (slope * p1.x);
+		}
+
+		
+
+		return points;
+
+	}//end getLineEquation
+
+	//gets line equations between all perimeters of shape forming triangles
+	std::vector<glm::vec3> GameObject::getshapeEquations(std::vector<glm::vec2> shape)
+	{
+		std::vector<glm::vec3> equations;
+		glm::vec3 eq;
+
+		for (int i = 0; i < shape.size(); i += 3) {
+			eq = getLineEquation(shape[i], shape[(i + 1)]);
+
+			equations.push_back(eq);
+
+			eq = getLineEquation(shape[i], shape[(i + 2)]);
+
+			equations.push_back(eq);
+
+			eq = getLineEquation(shape[(i + 1)], shape[(i + 2)]);
+
+			equations.push_back(eq);
+		}
+
+		return equations;
+
+	}//end getshapePerimeterEquations
+	
+	//check if 2 lines intersects and returns point of intersection
+	glm::vec2 GameObject::getIntersection(glm::vec3 line1, glm::vec3 line2) {
+		glm::vec2 intersection = { 2.0f,2.0f };
+
+		//x = (b*c2 - b2*c) / (a*b2 - a2*b)
+		if (line1.y == -1.0f && line2.y == -1.0f) {
+			intersection.x = (line1.y * line2.z - line2.y * line1.z) / (line1.x * line2.y - line2.x * line1.y);
+			intersection.y = (line1.x * intersection.x + line1.z) / (-1.0f * line1.y);
+		}
+		//line2 is vertical or horizontal
+		else if (line1.y == -1.0f) {
+			if (line2.x == 0.0f) {
+				//line2 y = n;
+				intersection.x = (line2.z - line1.z) / line1.x;
+				intersection.y = line2.z;
+			}
+			else {
+				//line2 x = n;
+				intersection.x = line2.z;
+				intersection.y = (line2.z - line1.z) / line1.x;
+				
+			}
+		}
+		//line1 is vertical or horizontal
+		else {
+			if (line1.x == 0.0f) {
+				//line1 y = n;
+				intersection.x = (line1.z - line2.z) / line2.x;
+				intersection.y = line1.z;
+			}
+			else {
+				//line2 x = n;
+				intersection.x = line1.z;
+				intersection.y = (line1.z - line2.z) / line2.x;
+
+			}
+
+		}
+
+		
+
+		return intersection;
+	}
+
+	bool GameObject::isPointInShapeLine(glm::vec2 point, std::vector<glm::vec2> twoPointCoords) {
+		if ((point.x <= twoPointCoords[0].x && point.x >= twoPointCoords[1].x) || (point.x >= twoPointCoords[0].x && point.x <= twoPointCoords[1].x)) {
+			if ((point.y <= twoPointCoords[0].y && point.y >= twoPointCoords[1].y) || (point.y >= twoPointCoords[0].y && point.y <= twoPointCoords[1].y)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}//end dev
