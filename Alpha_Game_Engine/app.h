@@ -25,6 +25,8 @@ namespace dev {
 			void run();
 			int m = 0;
 			int hold = 0;
+			int changecontrol = 0;
+			int random_objects = 0;
 
 		private:
 			//void loadModels();
@@ -38,6 +40,7 @@ namespace dev {
 			void recordCommandBuffer(int imageIndex);
 			void renderGameObjects(VkCommandBuffer commandBuffer);
 			//void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+			
 
 
 			Display_Window Display_Window{ WIDTH, HEIGHT, "Random Demo Window" };

@@ -31,6 +31,7 @@ namespace dev {
 
 	void App::run() {
 		while (!Display_Window.shouldClose()) {
+			//std::cout << "rand: " << random_objects;
 			glfwPollEvents();
 			drawFrame();
 			//glfwSetKeyCallback(Display_Window.getGLFW(), key_callback);
@@ -38,6 +39,21 @@ namespace dev {
 				m = (m + 1) % 3;
 				loadGameObjects(m);
 				hold = 1;
+			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_Z) == GLFW_PRESS && !changecontrol) {
+				for (int i = 0; i < objects.size(); i++) {
+					if (objects[i].inControl) {
+						objects[i].inControl = false;
+						objects[((i + 1) % objects.size())].inControl = true;
+						break;
+					}
+				}
+				changecontrol = 1;
+			}
+
+			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_Z) == GLFW_RELEASE && changecontrol) {
+				changecontrol = 0;
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_Q) == GLFW_PRESS && !hold) {
@@ -59,27 +75,50 @@ namespace dev {
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_F)) {
-				objects[0].transform2d.scale.x += 0.2f;
-				objects[0].transform2d.scale.y += 0.2f;
+				/*objects[0].transform2d.scale.x += 0.2f;
+				objects[0].transform2d.scale.y += 0.2f;*/
+				for (auto& obj : objects) {
+					if (obj.inControl) {
+						obj.transform2d.scale.x += 0.2f;
+						obj.transform2d.scale.y += 0.2f;
+					}
+				}
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_W)) {
-				objects[0].moveUp();
-				//for (auto& obj : objects) {
-				//	obj.transform2d.translation.y -= 0.1f;
-				//}
+				//objects[0].moveUp();
+				for (auto& obj : objects) {
+					if (obj.inControl) {
+						obj.moveUp();
+					}
+				}
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_A)) {
-				objects[0].moveLeft();
+				//objects[0].moveLeft();
+				for (auto& obj : objects) {
+					if (obj.inControl) {
+						obj.moveLeft();
+					}
+				}
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_S)) {
-				objects[0].moveDown();
+				//objects[0].moveDown();
+				for (auto& obj : objects) {
+					if (obj.inControl) {
+						obj.moveDown();
+					}
+				}
 			}
 
 			if (glfwGetKey(Display_Window.getGLFW(), GLFW_KEY_D)) {
-				objects[0].moveRight();
+				//[0].moveRight();
+				for (auto& obj : objects) {
+					if (obj.inControl) {
+						obj.moveRight();
+					}
+				}
 			}
 
 		}
@@ -103,6 +142,7 @@ namespace dev {
 	}*/
 
 	void App::loadGameObjects(int mode) {
+		//std::cout << "rand: " << random_objects;
 		objects.clear();
 
 		if (mode == 1) {
@@ -117,7 +157,7 @@ namespace dev {
 		else if (mode == 0) {
 			GameObject triangle = GameObject(device);
 
-			triangle.makeTriangle(-0.8f, -0.5f , -0.8f, -0.8f, -0.5f, -0.5f );
+			triangle.makeTriangle(-0.8f, 0.5f , -0.8f, 0.8f, -0.5f, 0.5f );
 			triangle.color = { 0.1f, 0.8f, 0.1f };
 			triangle.inControl = true;
 
@@ -148,6 +188,7 @@ namespace dev {
 		staticC.inControl = false;
 
 		objects.push_back(std::move(staticC));
+
 	}
 
 	/*
