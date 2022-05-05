@@ -110,6 +110,7 @@ namespace dev {
 
 			sq.makeSquare(0.5f, 0.5f, 0.3f, 0.3f);
 			sq.color = { 0.1f, 0.8f, 0.1f };
+			sq.inControl = true;
 
 			objects.push_back(std::move(sq));
 		}
@@ -118,29 +119,33 @@ namespace dev {
 
 			triangle.makeTriangle(-0.8f, -0.5f , -0.8f, -0.8f, -0.5f, -0.5f );
 			triangle.color = { 0.1f, 0.8f, 0.1f };
+			triangle.inControl = true;
 
 			objects.push_back(std::move(triangle));
 		}
 		else {
 			GameObject circle = GameObject(device);
 
-			circle.makeCircle(0.8f, 0.8f, 0.3f);
+			circle.makeCircle(0.8f, 0.8f, 0.2f);
 			circle.color = { 0.1f, 0.8f, 0.1f };
+			circle.inControl = true;
 
 			objects.push_back(std::move(circle));
 		}
 
-		/*GameObject staticSq = GameObject(device);
+		GameObject staticSq = GameObject(device);
 
-		staticSq.makeSquare(0.5f, 0.5f, 0.3f, 0.3f);
+		staticSq.makeSquare(0.5f, -0.5f, 0.3f, 0.3f);
 		staticSq.color = { 0.1f, 0.8f, 0.1f };
+		staticSq.inControl = false;
 
-		objects.push_back(std::move(staticSq));*/
+		objects.push_back(std::move(staticSq));
 
 		GameObject staticC = GameObject(device);
 
-		staticC.makeCircle(-0.5f, -0.5f, 0.3f);
+		staticC.makeCircle(-0.5f, -0.5f, 0.2f);
 		staticC.color = { 0.1f, 0.8f, 0.1f };
+		staticC.inControl = false;
 
 		objects.push_back(std::move(staticC));
 	}
@@ -494,20 +499,30 @@ namespace dev {
 		for (int i = 0; i < objects.size(); i++) {
 			//objects[i].transform2d.scale = { 1.0f, 1.0f };
 			//objects[i].transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
-			objects[i].rotate(30.0f);
+			//objects[i].rotate(30.0f);
 
-			for (int j = 0; j < objects.size(); j++) {
-				//std::cout << j;
-				if (j != i) {
-					if (objects[i].ifObjectsCollide(objects[j])) {
-						
-						//std::cout << "collide\n";
+			if (objects[i].inControl) {
+				int c = 0;
+				//std::cout << i << " in control\n";
+				for (int j = 0; j < objects.size(); j++) {
+					//std::cout << j;
+					if (j != i) {
+						if (objects[i].ifObjectsCollide(objects[j])) {
+							c++;
+							//std::cout << j << " collide\n";
+						}
+
+						if (c > 0) {
+							objects[i].color = { 1.0f, 0.0f, 0.0f };
+						}
+						//else {
+						//	//std::cout << " no collision \n";
+						//}
 					}
-					//else {
-					//	//std::cout << " no collision \n";
-					//}
 				}
 			}
+
+			
 
 			SimplePushConstantData pushData{};
 			pushData.offset = objects[i].transform2d.translation;

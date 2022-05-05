@@ -8,7 +8,7 @@ namespace dev {
 	GameObject::GameObject(MyDevice& device) : device{ device } {
 		static id_t curID = 0;
 		id = curID++;
-		speed = 0.1f; //default speed
+		speed = 0.02f; //default speed
 
 		if (id == 0) {
 			inControl = true;
@@ -119,28 +119,28 @@ namespace dev {
 	}//end makeCircle();
 
 	void GameObject::moveUp() {
-		transform2d.translation.y -= 0.1f;
+		transform2d.translation.y -= speed;
 		/*for (int i = 0; i < transform2d.positions.size(); i++) {
 			transform2d.positions[i].y -= 0.1f;
 		}*/
 	}
 
 	void GameObject::moveDown(){
-		transform2d.translation.y += 0.1f;
+		transform2d.translation.y += speed;
 		/*for (int i = 0; i < transform2d.positions.size(); i++) {
 			transform2d.positions[i].y += 0.1f;
 		}*/
 	}
 
 	void GameObject::moveLeft() {
-		transform2d.translation.x -= 0.1f;
+		transform2d.translation.x -= speed;
 		/*for (int i = 0; i < transform2d.positions.size(); i++) {
 			transform2d.positions[i].x -= 0.1f;
 		}*/
 	}
 
 	void GameObject::moveRight() {
-		transform2d.translation.x += 0.1f;
+		transform2d.translation.x += speed;
 		/*for (int i = 0; i < transform2d.positions.size(); i++) {
 			transform2d.positions[i].x += 0.1f;
 		}*/
@@ -209,6 +209,52 @@ namespace dev {
 		std::vector<glm::vec2> selfCoords = calcPos();
 		std::vector<glm::vec2> targetCoords = target.calcPos();
 
+		float MinX = selfCoords[0].x;
+		float MaxX = selfCoords[0].x;
+		float MinY = selfCoords[0].y;
+		float MaxY = selfCoords[0].y;
+
+		float tMinX = targetCoords[0].x;
+		float tMaxX = targetCoords[0].x;
+		float tMinY = targetCoords[0].y;
+		float tMaxY = targetCoords[0].y;
+
+		for (int i = 1; i < selfCoords.size(); i++) {
+			if (MinX > selfCoords[i].x) {
+				MinX = selfCoords[i].x;
+			}
+
+			if (MaxX < selfCoords[i].x) {
+				MaxX = selfCoords[i].x;
+			}
+
+			if (MinY > selfCoords[i].y) {
+				MinY = selfCoords[i].y;
+			}
+
+			if (MaxY < selfCoords[i].y) {
+				MaxY = selfCoords[i].y;
+			}
+		}
+
+		for (int i = 1; i < targetCoords.size(); i++) {
+			if (tMinX > targetCoords[i].x) {
+				tMinX = targetCoords[i].x;
+			}
+
+			if (tMaxX < targetCoords[i].x) {
+				tMaxX = targetCoords[i].x;
+			}
+
+			if (tMinY > targetCoords[i].y) {
+				tMinY = targetCoords[i].y;
+			}
+
+			if (tMaxY < targetCoords[i].y) {
+				tMaxY = targetCoords[i].y;
+			}
+		}
+
 		if (isCircle && target.isCircle) {
 			if (glm::distance(selfCoords[0], targetCoords[0]) > r + target.r) {
 				color = { 0.0f, 1.0f, 0.0f };
@@ -222,10 +268,6 @@ namespace dev {
 			}
 		}
 		else if (isCircle) {
-			float tMinX = targetCoords[0].x;
-			float tMaxX = targetCoords[0].x + w;
-			float tMinY = targetCoords[0].y - h;
-			float tMaxY = targetCoords[0].y;
 
 			std::vector<glm::vec2> p4 = { 
 				{tMinX, tMinY},
@@ -240,16 +282,15 @@ namespace dev {
 					target.color = { 1.0f, 0.0f, 0.0f };
 					return true;
 				}
+				else if(i == p4.size() - 1){
+					color = { 0.0f, 1.0f, 0.0f };
+					target.color = { 0.0f, 1.0f, 0.0f };
+					return false;
+				}
 			}
-			color = { 0.0f, 1.0f, 0.0f };
-			target.color = { 0.0f, 1.0f, 0.0f };
-			return false;
+			
 		}
 		else if (target.isCircle) {
-			float MinX = selfCoords[0].x;
-			float MaxX = selfCoords[0].x + w;
-			float MinY = selfCoords[0].y - h;
-			float MaxY = selfCoords[0].y;
 
 			std::vector<glm::vec2> p4 = {
 				{MinX, MinY},
@@ -264,33 +305,31 @@ namespace dev {
 					target.color = { 1.0f, 0.0f, 0.0f };
 					return true;
 				}
+				else if (i == p4.size() - 1) {
+					color = { 0.0f, 1.0f, 0.0f };
+					target.color = { 0.0f, 1.0f, 0.0f };
+					return false;
+				}
 			}
-			color = { 0.0f, 1.0f, 0.0f };
-			target.color = { 0.0f, 1.0f, 0.0f };
-			return false;
 		}
 		//2squares
 		else {
-			if (targetCoords[0].x <= selfCoords[0].x + w && targetCoords[0].x >= selfCoords[0].x &&
-				targetCoords[0].y <= selfCoords[0].y && targetCoords[0].y >= selfCoords[0].y - h) {
+			if (tMinX <= MaxX && tMinX >= MinX && tMaxY <= MaxY && tMaxY >= MinY) {
 				color = { 1.0f, 0.0f, 0.0f };
 				target.color = { 1.0f, 0.0f, 0.0f };
 				return true;
 			}
-			else if (targetCoords[0].x <= selfCoords[0].x + w && targetCoords[0].x >= selfCoords[0].x &&
-				targetCoords[0].y - h <= selfCoords[0].y && targetCoords[0].y - h >= selfCoords[0].y - h) {
+			else if (tMinX <= MaxX && tMinX >= MinX && tMinY <= MaxY && tMinY >= MinY) {
 				color = { 1.0f, 0.0f, 0.0f };
 				target.color = { 1.0f, 0.0f, 0.0f };
 				return true;
 			}
-			else if (targetCoords[0].x + w <= selfCoords[0].x + w && targetCoords[0].x + w >= selfCoords[0].x &&
-				targetCoords[0].y <= selfCoords[0].y && targetCoords[0].y >= selfCoords[0].y - h) {
+			else if (tMaxX <= MaxX && tMaxX >= MinX && tMaxY <= MaxY && tMaxY >= MinY) {
 				color = { 1.0f, 0.0f, 0.0f };
 				target.color = { 1.0f, 0.0f, 0.0f };
 				return true;
 			}
-			else if (targetCoords[0].x + w <= selfCoords[0].x + w && targetCoords[0].x + w >= selfCoords[0].x &&
-				targetCoords[0].y - h <= selfCoords[0].y && targetCoords[0].y - h >= selfCoords[0].y - h) {
+			else if (tMaxX <= MaxX && tMaxX >= MinX && tMinY <= MaxY && tMinY >= MinY) {
 				color = { 1.0f, 0.0f, 0.0f };
 				target.color = { 1.0f, 0.0f, 0.0f };
 				return true;
